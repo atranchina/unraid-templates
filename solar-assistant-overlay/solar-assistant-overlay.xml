@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+  Unraid Docker template for Solar Assistant Overlay.
+  Copy to \\<server>\flash\config\plugins\dockerMan\templates-user\ (= /boot/config/plugins/dockerMan/templates-user/),
+  then Docker > Add Container > Template: Solar-Assistant-Overlay > Apply.
+  Nothing else to fill in: the dashboard name, Solar Assistant address and SSH password are entered on the
+  onboarding screen the first time you open the WebUI. Unraid passes its own timezone as TZ.
+-->
+<Container version="2">
+  <Name>Solar-Assistant-Overlay</Name>
+  <Repository>ghcr.io/atranchina/solar-assistant-overlay:latest</Repository>
+  <Registry>https://github.com/atranchina/solar-assistant-overlay/pkgs/container/solar-assistant-overlay</Registry>
+  <Network>bridge</Network>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Project>https://github.com/atranchina/solar-assistant-overlay</Project>
+  <Overview>Read-only live dashboard for Solar Assistant: power flow, lifetime solar and savings, PV forecast and 24-hour charts. Set up from the WebUI on first launch.</Overview>
+  <Category>Tools: HomeAutomation:</Category>
+  <WebUI>http://[IP]:[PORT:8080]/</WebUI>
+  <Icon>https://raw.githubusercontent.com/atranchina/unraid-templates/main/solar-assistant-overlay/icon.png</Icon>
+  <ExtraParams/>
+  <PostArgs/>
+  <Config Name="WebUI port" Target="8080" Default="8095" Mode="tcp" Description="Port for the dashboard web page." Type="Port" Display="always" Required="true" Mask="false">8095</Config>
+  <Config Name="Appdata" Target="/data" Default="/mnt/user/appdata/solar-assistant-overlay" Mode="rw" Description="Stores config.json (from onboarding), lifetime totals and chart history." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/solar-assistant-overlay</Config>
+  <Config Name="PUID" Target="PUID" Default="99" Mode="" Description="Owner of the appdata files (99 = nobody)." Type="Variable" Display="advanced" Required="false" Mask="false">99</Config>
+  <Config Name="PGID" Target="PGID" Default="100" Mode="" Description="Group of the appdata files (100 = users)." Type="Variable" Display="advanced" Required="false" Mask="false">100</Config>
+</Container>
