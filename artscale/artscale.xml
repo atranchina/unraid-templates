@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <!--
   Unraid Docker template for ARTscale (ARTscale web console + headscale, all in one container).
-  Copy to \\<server>\flash\config\plugins\dockerMan\templates-user\ (= /boot/config/plugins/dockerMan/templates-user/),
-  then Docker > Add Container > Template: ARTscale > fill in "Public headscale URL" > Apply.
+  Copy to \\<server>\flash\config\plugins\dockerMan\templates-user\ (= /boot/config/plugins/dockerMan/templates-user/)
+  saved as my-ARTscale.xml (not artscale.xml: Unraid would recreate the container from the blank template on
+  every update), then Docker > Add Container > Template: ARTscale > fill in "Public headscale URL" > Apply.
   One address serves both the console and your devices: point one Nginx Proxy Manager host (Websockets on)
   at the WebUI port and use that same https address as "Public headscale URL".
   Then: Docker > ARTscale > Logs shows a setup code; open the WebUI and create your account with it.
