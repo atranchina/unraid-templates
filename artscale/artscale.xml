@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+  Unraid Docker template for ARTscale (ARTscale web console + headscale, all in one container).
+  Copy to \\<server>\flash\config\plugins\dockerMan\templates-user\ (= /boot/config/plugins/dockerMan/templates-user/),
+  then Docker > Add Container > Template: ARTscale > fill in "Public headscale URL" > Apply.
+  Then: Docker > ARTscale > Logs shows a setup code; open the WebUI and create your account with it.
+  Nginx Proxy Manager, router and first-login steps: https://github.com/atranchina/ARTscale/blob/main/docs/setup.md
+  The headscale API key is created automatically on first start. Any headscale setting can be added
+  as an extra variable named HEADSCALE_<SETTING> (e.g. HEADSCALE_LOG_LEVEL=debug).
+-->
+<Container version="2">
+  <Name>ARTscale</Name>
+  <Repository>ghcr.io/atranchina/artscale:latest</Repository>
+  <Registry>https://github.com/users/atranchina/packages/container/package/artscale</Registry>
+  <Network>bridge</Network>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Project>https://github.com/atranchina/ARTscale</Project>
+  <Overview>Self-hosted Tailscale control server (headscale) with a web console for reaching customer networks on demand. Turn each customer's subnet routes on and off, with a conflict guard for customers that share the same subnets and auto-off timers. Works with the standard Tailscale apps. Setup: point two Nginx Proxy Manager hosts at this container (hs.yourdomain -&gt; Headscale port with Websockets on; artscale.yourdomain -&gt; WebUI port), forward UDP 3478 on your router to Unraid, then get the setup code from the container log.</Overview>
+  <Category>Network:VPN Tools:</Category>
+  <WebUI>http://[IP]:[PORT:8090]/</WebUI>
+  <Icon>https://raw.githubusercontent.com/atranchina/unraid-templates/main/artscale/icon.png</Icon>
+  <ExtraParams/>
+  <PostArgs/>
+  <Config Name="WebUI port" Target="8090" Default="8090" Mode="tcp" Description="ARTscale web console. Point your Nginx Proxy Manager host for artscale.yourdomain here." Type="Port" Display="always" Required="true" Mask="false">8090</Config>
+  <Config Name="Headscale port" Target="8080" Default="8085" Mode="tcp" Description="Tailscale control server and relay. Point your Nginx Proxy Manager host for hs.yourdomain here, with Websockets Support on." Type="Port" Display="always" Required="true" Mask="false">8085</Config>
+  <Config Name="STUN port" Target="3478" Default="3478" Mode="udp" Description="Relay STUN. Must stay 3478 and be port-forwarded (UDP) from your router to Unraid." Type="Port" Display="always" Required="true" Mask="false">3478</Config>
+  <Config Name="Appdata" Target="/data" Default="/mnt/user/appdata/artscale" Mode="rw" Description="headscale database and keys, ARTscale settings and activity log, and the auto-created API key. Back this up." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/artscale</Config>
+  <Config Name="Public headscale URL" Target="HEADSCALE_SERVER_URL" Default="" Mode="" Description="The public HTTPS address every Tailscale device uses, served through Nginx Proxy Manager, e.g. https://hs.example.com. Hard to change later." Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="Public IPv4 for relay" Target="HEADSCALE_DERP_SERVER_IPV4" Default="" Mode="" Description="Optional. Leave empty to look it up through DNS (best if your IP changes). Set it only if your public IP is static." Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Public IPv6 for relay" Target="HEADSCALE_DERP_SERVER_IPV6" Default="" Mode="" Description="Optional. Only if you have a public IPv6 address." Type="Variable" Display="advanced" Required="false" Mask="false"/>
+  <Config Name="Trusted proxy networks" Target="ARTSCALE_TRUSTED_PROXIES" Default="172.16.0.0/12" Mode="" Description="Where Nginx Proxy Manager's requests come from (comma-separated CIDRs), so login lockout sees real visitor IPs. Add NPM's own IP if it runs on br0." Type="Variable" Display="advanced" Required="false" Mask="false">172.16.0.0/12</Config>
+  <Config Name="Secure cookies" Target="ARTSCALE_COOKIE_SECURE" Default="auto" Mode="" Description="auto = secure over HTTPS (through NPM) and still works over plain HTTP on your LAN. true = HTTPS only. false = never." Type="Variable" Display="advanced" Required="false" Mask="false">auto</Config>
+  <Config Name="MagicDNS domain" Target="HEADSCALE_DNS_BASE_DOMAIN" Default="art.internal" Mode="" Description="Devices get names like pi-acme.art.internal." Type="Variable" Display="advanced" Required="false" Mask="false">art.internal</Config>
+  <Config Name="PUID" Target="PUID" Default="99" Mode="" Description="Owner of the appdata files (99 = nobody)." Type="Variable" Display="advanced" Required="false" Mask="false">99</Config>
+  <Config Name="PGID" Target="PGID" Default="100" Mode="" Description="Group of the appdata files (100 = users)." Type="Variable" Display="advanced" Required="false" Mask="false">100</Config>
+</Container>
